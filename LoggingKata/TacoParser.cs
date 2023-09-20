@@ -14,7 +14,7 @@ namespace LoggingKata
             logger.LogInfo("Begin parsing");
 
             // Take your line and use line.Split(',') to split it up into an array of strings, separated by the char ','
-            var cells = line.Split(','); //   {34.071477,  -84.296345,  Taco Bell Alpharett}
+            string[] cells = line.Split(','); //   {34.071477,  -84.296345,  Taco Bell Alpharett}
 
             logger.LogInfo("Finished the line split");
             // If your array.Length is less than 3, something went wrong
@@ -30,23 +30,27 @@ namespace LoggingKata
             // which is similar to parsing a string as an `int`
             // grab the latitude from your array at index 0
             logger.LogInfo("Assign cell[0]");
-            double dblTacoLATPt1 = double.Parse(cells[0]);
+            double dblTacoLATPt = double.Parse(cells[0]);
 
             // grab the longitude from your array at index 1
             logger.LogInfo("Assign cell[1]");
-            double dblTacoLONGPt2 = double.Parse(cells[1]);
+            double dblTacoLONGPt = double.Parse(cells[1]);
 
             // grab the name from your array at index 2
             logger.LogInfo("Assign cell[2]");
-            string strName = cells[2];
+            string tacboBellName = cells[2];
 
-            //---ROGUE CODE---------------------------------------------------
+
+
+
             logger.LogInfo("Create TacoBellPt POINT ");
-            Point tacoBellPoint = new Point
-            {
-                Latitude  = dblTacoLATPt1,
-                Longitude = dblTacoLONGPt2
-            }; //----END ROGUE
+            Point tacoBellPoint = new Point();
+            tacoBellPoint.Latitude = dblTacoLATPt;
+            tacoBellPoint.Longitude = dblTacoLONGPt;
+
+            TacoBell tacoBellNamLoc = new TacoBell();
+            tacoBellNamLoc.Name = tacboBellName;
+            tacoBellNamLoc.Location = tacoBellPoint;
 
             // You'll need to create a TacoBell class
             // that *****conforms to ITrackable******* [DONE]
@@ -54,7 +58,7 @@ namespace LoggingKata
             // Then, you'll need an instance of the TacoBell class
             // With the name and [point set] correctly;
             logger.LogInfo("Create Tacbobell class instance, assign Name and POINT ");
-            TacoBell tacoBellNamLoc = new TacoBell() { Name = strName, Location = tacoBellPoint };
+            tacoBellNamLoc = new TacoBell() { Name = tacboBellName, Location = tacoBellPoint };
 
             // Then, return the instance of your TacoBell class
             // Since it conforms to ITrackable

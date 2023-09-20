@@ -28,8 +28,7 @@ namespace LoggingKata
 
             // use File.ReadAllLines(path) to grab all the lines from your csv file
             // Log and error if you get 0 lines and a warning if you get 1 line
-            var lines = File.ReadAllLines(csvPath);
-
+            string[]  lines = File.ReadAllLines(csvPath);
 
             //--------------------------------------------------------
             logger.LogInfo($"Lines: {lines[0]}"); //Logging how MANY lines we got from CSV
@@ -43,63 +42,54 @@ namespace LoggingKata
 
             //--------------------------------------------------------
             // Grab an IEnumerable of locations using the Select command: var locations = lines.Select(parser.Parse);
+            //LINQ delegate reference  to a method, method reference - not technically a method call
+            //you are passing a reference so  delegate ref <==> (parser.Parse)   vs (parser.Parse())
             ITrackable[] locations = lines.Select(parser.Parse).ToArray();
             logger.LogInfo("Finished Parsing all of the CSV file with TacoBell Locations\n\n\n");
             Console.WriteLine("Press Return To Find stores furthest apart> ");
             Console.ReadLine();
 
+
             //--------------------------------------------------------
             // DON'T FORGET TO LOG YOUR STEPS
             // Now that your Parse method is completed, START BELOW ----------
-
 
             // TODO: Create two `ITrackable` variables with initial values of `null`. These
             // will be used to store your two taco bells that are the farthest from each other.
             // Create a `double` variable to store the distance
 
-            ITrackable trackable1 = null;
-            ITrackable trackable2 = null;
+            ITrackable tacoBell1 = null;
+            ITrackable tacoBell2 = null;
 
             // Include the Geolocation toolbox, so you can compare
             // locations: `using GeoCoordinatePortable;`  [DONE]
 
-
-
-
             //HINT NESTED LOOPS SECTION---------------------
             // Do a loop for your locations to grab each location as the origin (perhaps: `locA`)
-            double longestDistance    = 0;
-            double tmpMeters = 0;
-            double tmpMiles = 0;
-            string name1 = "";
-            string name2 = "";
+
+            //Class Version
             double kilometerConvert = 0.000621371;
 
-            for (int i=0; i<locations.Length; i++)
+            double distance = 0;
+            for (int i = 0; i < locations.Length; i++)
             {
-                //Console.WriteLine($"LOCATION Name:{locations[i].Name}, LAT/LONG:{locations[i].Location} ");
-                GeoCoordinate geoCordA = new GeoCoordinate();
-                geoCordA.Latitude  = locations[i].Location.Latitude;
-                geoCordA.Longitude = locations[i].Location.Longitude;
+                ITrackable locA = locations[i];
+                var corA = new GeoCoordinate(locA.Location.Latitude, locA.Location.Longitude);
 
-                //Point pointA = locations[i].Location;
-                for (int j=0; j<locations.Length; j++)
+                for (int x = 0; x < locations.Length; x++)
                 {
-                    GeoCoordinate geoCordB = new GeoCoordinate();
-                    geoCordB.Latitude  = locations[j].Location.Latitude;
-                    geoCordB.Longitude = locations[j].Location.Longitude;
-                    tmpMeters = geoCordA.GetDistanceTo(geoCordB);
-                    tmpMiles = tmpMeters  * kilometerConvert;
-                    if ( tmpMiles > longestDistance)
+                    ITrackable locB = locations[x];
+                    var corB = new GeoCoordinate(locB.Location.Latitude, locB.Location.Longitude);
+                    if (corA.GetDistanceTo(corB) > distance)
                     {
-                        longestDistance = tmpMiles;
-                        name1 = locations[i].Name;
-                        name2 = locations[j].Name;
-                    }//if
+                        distance = corA.GetDistanceTo(corB);
+                        tacoBell1 = locA;
+                        tacoBell2 = locB;
+                    }
 
                 }//for inner
             }//for outter 
-            Console.WriteLine($"Longest Distance in Miles: {longestDistance}, {name1}, {name2}");
+            Console.WriteLine($"Longest Distance in Miles: {distance*kilometerConvert}, {tacoBell1.Name}, {tacoBell2.Name}");
             Console.WriteLine("Press Return To Continue> ");
             Console.ReadLine();
 
